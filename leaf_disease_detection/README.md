@@ -1,6 +1,6 @@
 # 🌿 LeafScan — Plant Leaf Disease Detection System
 
-A full-stack Django web application that uses a fine-tuned **ResNet50 CNN** to detect plant leaf diseases across **38 classes** and **14 plant species**, powered by the [New Plant Diseases Dataset](https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset) on Kaggle.
+A full-stack Django web application that uses a fine-tuned **ResNet50 CNN** to detect plant leaf diseases across **37 classes** and **13 plant species**, powered by the [New Plant Diseases Dataset](https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset) on Kaggle.
 
 ---
 
@@ -23,7 +23,7 @@ A full-stack Django web application that uses a fine-tuned **ResNet50 CNN** to d
 ## ✨ Features
 
 - 📸 **Drag-and-drop image upload** (JPG, PNG, WebP — up to 10 MB)
-- 🔬 **38-class disease detection** across 14 plant species
+- 🔬 **37-class disease detection** across 13 plant species
 - 💊 **Treatment & prevention advice** for every detected disease
 - 📊 **Top-5 predictions** with confidence bar chart
 - 🗂️ **Prediction history** — browse all past scans in a table
@@ -194,11 +194,11 @@ leafscan/
     │   ├── Apple___Black_rot/
     │   ├── Apple___Cedar_apple_rust/
     │   ├── Apple___healthy/
-    │   ├── ... (38 class folders total)
+    │   ├── ... (37 class folders total)
     └── valid/
         ├── Apple___Apple_scab/
         ├── Apple___Black_rot/
-        └── ... (38 class folders total)
+        └── ... (37 class folders total)
 ```
 
 ---
@@ -260,8 +260,8 @@ The app will now load and use your trained model for real predictions.
 | Stat                | Value              |
 |---------------------|--------------------|
 | Total Images        | 87,000+            |
-| Disease Classes     | 38                 |
-| Plant Species       | 14                 |
+| Disease Classes     | 37                 |
+| Plant Species       | 13                 |
 | Train / Valid Split | 80% / 20%          |
 | Image Format        | JPG (RGB)          |
 | Model Input Size    | 224 × 224 pixels   |
@@ -272,8 +272,7 @@ The app will now load and use your trained model for real predictions.
 
 | Plant          | Conditions Detected                                                                                         |
 |----------------|-------------------------------------------------------------------------------------------------------------|
-| Apple          | Apple Scab, Black Rot, Cedar Apple Rust, Healthy                                                            |
-| Blueberry      | Healthy                                                                                                     |
+| Apple          | Apple Scab, Black Rot, Cedar Apple Rust, Healthy                                                            |                                                                                    
 | Cherry         | Powdery Mildew, Healthy                                                                                     |
 | Corn (Maize)   | Gray Leaf Spot, Common Rust, Northern Leaf Blight, Healthy                                                  |
 | Grape          | Black Rot, Esca (Black Measles), Leaf Blight (Isariopsis), Healthy                                         |
@@ -330,7 +329,7 @@ If no trained model file is found at `detector/ml_model/plant_disease_model.h5`,
 
 ## 📝 Notes for Internship Submission
 
-- All **38 disease classes** from the New Plant Diseases Dataset are implemented
+- All **37 disease classes** from the New Plant Diseases Dataset are implemented
 - **Treatment, prevention, and symptom information** is provided for every class
 - The codebase follows **Django best practices**: separated app, models, views, templates, URLs
 - The **ML pipeline is modular** — swap the model file at any time without touching application code
