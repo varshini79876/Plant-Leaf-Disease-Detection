@@ -1,0 +1,127 @@
+{% extends 'detector/base.html' %}
+{% block title %}{{ prediction.plant_name }} — {{ prediction.disease_name }} | LeafScan{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-hdr {
+  background:{% if prediction.is_healthy %}linear-gradient(135deg,#1a3a2a,#2d6a4f){% else %}linear-gradient(135deg,#5c1a0a,#8b2500){% endif %};
+  color:#fff; padding:3rem 1.5rem;
+}
+.page-hdr h1 { font-family:'Playfair Display',serif; font-size:2rem; }
+.page-hdr p  { color:rgba(255,255,255,.6); margin-top:.4rem; }
+.back-link   { color:rgba(255,255,255,.55); text-decoration:none; font-size:.84rem; }
+.back-link:hover { color:#fff; }
+
+.detail-section { padding:3rem 1.5rem; }
+.detail-grid {
+  display:grid; grid-template-columns:1fr 1.6fr; gap:2rem; align-items:start;
+}
+@media(max-width:680px){ .detail-grid{ grid-template-columns:1fr; } }
+
+.leaf-img {
+  width:100%; border-radius:var(--r);
+  box-shadow:var(--sh-md); border:3px solid var(--g-light);
+}
+
+.d-card { background:#fff; border-radius:var(--r); box-shadow:var(--sh-sm); overflow:hidden; }
+.d-card-hdr { background:var(--g-dark); color:#fff; padding:1.1rem 1.5rem; font-family:'Playfair Display',serif; font-size:1.1rem; }
+.d-card-body { padding:1.4rem 1.5rem; }
+
+.meta-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:.6rem 0; border-bottom:1px solid #f0f0f0; font-size:.87rem;
+}
+.meta-row:last-child { border-bottom:none; }
+.meta-lbl { color:var(--muted); font-weight:500; }
+.meta-val { font-weight:600; color:var(--text); }
+
+.info-section {
+  background:#fff; border-radius:var(--r); box-shadow:var(--sh-sm);
+  padding:1.5rem; margin-top:2rem;
+}
+.info-section h3 {
+  font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--g-dark);
+  margin-bottom:1rem; padding-bottom:.6rem; border-bottom:2px solid var(--g-pale);
+}
+.info-section p   { font-size:.88rem; line-height:1.72; color:#444; margin-bottom:.7rem; }
+.info-section strong { color:var(--g-dark); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hdr">
+  <div class="container">
+    <a href="{% url 'history' %}" class="back-link"><i class="fas fa-arrow-left"></i> Back to History</a>
+    <h1 style="margin-top:.7rem;">{{ prediction.plant_name }}</h1>
+    <p>{{ prediction.disease_name }} &mdash; Analysed {{ prediction.created_at|date:"F d, Y \a\t g:i A" }}</p>
+  </div>
+</div>
+
+<section class="detail-section">
+  <div class="container">
+    <div class="detail-grid">
+
+      <!-- Image -->
+      <div>
+        <img src="{{ prediction.image.url }}" alt="{{ prediction.plant_name }}" class="leaf-img" />
+      </div>
+
+      <!-- Results card -->
+      <div>
+        <div class="d-card">
+          <div class="d-card-hdr"><i class="fas fa-clipboard-list"></i> &nbsp;Detection Results</div>
+          <div class="d-card-body">
+            <div class="meta-row">
+              <span class="meta-lbl">Plant Species</span>
+              <span class="meta-val">{{ prediction.plant_name }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-lbl">Disease / Condition</span>
+              <span class="meta-val">{{ prediction.disease_name }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-lbl">Health Status</span>
+              <span class="meta-val">
+                {% if prediction.is_healthy %}
+                  <span class="badge b-healthy"><i class="fas fa-check-circle"></i> Healthy</span>
+                {% else %}
+                  <span class="badge b-diseased"><i class="fas fa-virus"></i> Diseased</span>
+                {% endif %}
+              </span>
+            </div>
+            {% if disease_info.severity %}
+            <div class="meta-row">
+              <span class="meta-lbl">Severity</span>
+              <span class="meta-val">{{ disease_info.severity }}</span>
+            </div>
+            {% endif %}
+            <div class="meta-row">
+              <span class="meta-lbl">Confidence</span>
+              <span class="meta-val" style="font-family:'DM Mono',monospace;">{{ prediction.confidence|floatformat:2 }}%</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-lbl">Analysed On</span>
+              <span class="meta-val">{{ prediction.created_at|date:"M d, Y" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if disease_info %}
+    <div class="info-section">
+      <h3><i class="fas fa-info-circle" style="color:var(--g-mid);margin-right:.4rem;"></i>Disease Information</h3>
+      {% if disease_info.description %}<p><strong>Description:</strong> {{ disease_info.description }}</p>{% endif %}
+      {% if disease_info.symptoms   %}<p><strong>Symptoms:</strong> {{ disease_info.symptoms }}</p>{% endif %}
+      {% if disease_info.treatment  %}<p><strong>Treatment:</strong> {{ disease_info.treatment }}</p>{% endif %}
+      {% if disease_info.prevention %}<p><strong>Prevention:</strong> {{ disease_info.prevention }}</p>{% endif %}
+    </div>
+    {% endif %}
+
+    <div style="margin-top:2rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+      <a href="{% url 'index' %}"   class="btn btn-primary"><i class="fas fa-camera"></i> Analyse Another</a>
+      <a href="{% url 'history' %}" class="btn btn-outline"><i class="fas fa-history"></i> View History</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

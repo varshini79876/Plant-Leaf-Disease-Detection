@@ -1,0 +1,130 @@
+{% extends 'detector/base.html' %}
+{% block title %}About — LeafScan{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-hdr { background:linear-gradient(135deg,var(--g-dark),var(--g-mid)); color:#fff; padding:3rem 1.5rem; }
+.page-hdr h1 { font-family:'Playfair Display',serif; font-size:2.1rem; }
+.page-hdr p  { color:rgba(255,255,255,.62); margin-top:.4rem; }
+
+.about-section { padding:3rem 1.5rem; }
+
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.4rem; margin-bottom:3rem; }
+@media(max-width:660px){ .about-grid{ grid-template-columns:1fr; } }
+
+.a-card { background:#fff; border-radius:var(--r); padding:1.8rem; box-shadow:var(--sh-sm); }
+.a-card-icon {
+  width:50px; height:50px; background:var(--g-pale); border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem; color:var(--g-mid); margin-bottom:1rem;
+}
+.a-card h3 { font-family:'Playfair Display',serif; color:var(--g-dark); margin-bottom:.5rem; }
+.a-card p  { font-size:.88rem; color:var(--muted); line-height:1.72; }
+
+.plants-wrap { display:flex; flex-wrap:wrap; gap:.55rem; margin-top:.9rem; }
+.plant-chip {
+  background:var(--g-pale); color:var(--g-dark);
+  border-radius:999px; padding:.28rem .82rem; font-size:.8rem; font-weight:600;
+}
+
+.pipeline { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1rem; margin-top:1.5rem; }
+.step { text-align:center; padding:1.5rem 1rem; background:var(--cream); border-radius:var(--r); }
+.step-num {
+  width:36px; height:36px; background:var(--g-mid); color:#fff;
+  border-radius:50%; font-weight:700; font-size:.84rem;
+  display:flex; align-items:center; justify-content:center; margin:0 auto .7rem;
+}
+.step h4 { font-size:.88rem; font-weight:700; color:var(--g-dark); margin-bottom:.3rem; }
+.step p  { font-size:.78rem; color:var(--muted); line-height:1.6; }
+
+table.info-table { width:100%; border-collapse:collapse; background:#fff; border-radius:var(--r); overflow:hidden; box-shadow:var(--sh-sm); margin-top:1.5rem; }
+.info-table th { background:var(--g-dark); color:#fff; padding:.85rem 1.1rem; text-align:left; font-size:.78rem; text-transform:uppercase; letter-spacing:.6px; }
+.info-table td { padding:.8rem 1.1rem; border-bottom:1px solid #f0f0f0; font-size:.86rem; }
+.info-table tr:last-child td { border-bottom:none; }
+.info-table tr:hover td { background:var(--g-pale); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hdr">
+  <div class="container">
+    <h1><i class="fas fa-info-circle" style="margin-right:.5rem;"></i>About LeafScan</h1>
+    <p>Deep-learning plant disease detection using the New Plant Diseases Dataset</p>
+  </div>
+</div>
+
+<section class="about-section">
+  <div class="container">
+
+    <div class="about-grid">
+      <div class="a-card">
+        <div class="a-card-icon"><i class="fas fa-database"></i></div>
+        <h3>Dataset</h3>
+        <p>Built on the <strong>New Plant Diseases Dataset</strong> from Kaggle. It contains <strong>87,000+</strong> RGB leaf images across <strong>{{ total_classes }} classes</strong> of 13 crop species — both healthy and diseased samples.</p>
+        <a href="https://www.kaggle.com/datasets/vipoooool/new-plant-diseases-dataset" target="_blank"
+           class="btn btn-outline" style="margin-top:1rem;font-size:.8rem;padding:.42rem .95rem;">
+          <i class="fab fa-kaggle"></i> View on Kaggle
+        </a>
+      </div>
+
+      <div class="a-card">
+        <div class="a-card-icon"><i class="fas fa-brain"></i></div>
+        <h3>Model Architecture</h3>
+        <p>A <strong>ResNet50</strong> backbone pre-trained on ImageNet is fine-tuned on the dataset. Input images are resized to <strong>224 × 224</strong> pixels and normalised to [0, 1]. The model outputs a softmax probability distribution over all {{ total_classes }} classes.</p>
+      </div>
+
+      <div class="a-card">
+        <div class="a-card-icon"><i class="fas fa-code"></i></div>
+        <h3>Tech Stack</h3>
+        <p>
+          <strong>Backend:</strong> Django 4.x (Python)<br>
+          <strong>ML / AI:</strong> TensorFlow 2.x / Keras (ResNet50)<br>
+          <strong>Frontend:</strong> HTML5, CSS3, Vanilla JavaScript<br>
+          <strong>Database:</strong> SQLite (zero configuration)<br>
+          <strong>Image Processing:</strong> Pillow, NumPy
+        </p>
+      </div>
+
+      <div class="a-card">
+        <div class="a-card-icon"><i class="fas fa-seedling"></i></div>
+        <h3>Supported Plants (13)</h3>
+        <p>The system detects diseases across these plant species:</p>
+        <div class="plants-wrap">
+          {% for plant in plants %}
+          <span class="plant-chip">{{ plant }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Pipeline -->
+    <h2 class="sec-title">How It Works</h2>
+    <p class="sec-sub">From image upload to diagnosis in under a second</p>
+    <div class="pipeline">
+      <div class="step"><div class="step-num">1</div><h4>Upload Image</h4><p>User uploads a leaf photo (JPG / PNG / WebP)</p></div>
+      <div class="step"><div class="step-num">2</div><h4>Pre-process</h4><p>Resize to 224 × 224 and normalise pixel values to [0, 1]</p></div>
+      <div class="step"><div class="step-num">3</div><h4>CNN Inference</h4><p>ResNet50 model outputs probabilities for all {{ total_classes }} classes</p></div>
+      <div class="step"><div class="step-num">4</div><h4>Diagnosis</h4><p>Top prediction shown with confidence, symptoms, and treatment</p></div>
+      <div class="step"><div class="step-num">5</div><h4>Save History</h4><p>Result stored in SQLite for future reference</p></div>
+    </div>
+
+    <!-- Dataset stats table -->
+    <h2 class="sec-title" style="margin-top:3rem;">Dataset Statistics</h2>
+    <p class="sec-sub">Key figures from the New Plant Diseases Dataset</p>
+    <table class="info-table">
+      <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Total Images</td><td>87,000 +</td></tr>
+        <tr><td>Disease Classes</td><td>{{ total_classes }}</td></tr>
+        <tr><td>Plant Species</td><td>{{ total_plants }}</td></tr>
+        <tr><td>Training Split</td><td>80 %</td></tr>
+        <tr><td>Validation Split</td><td>20 %</td></tr>
+        <tr><td>Image Format</td><td>JPG (RGB)</td></tr>
+        <tr><td>Model Input Size</td><td>224 × 224 pixels</td></tr>
+        <tr><td>Model Architecture</td><td>ResNet50 (fine-tuned)</td></tr>
+      </tbody>
+    </table>
+
+  </div>
+</section>
+{% endblock %}

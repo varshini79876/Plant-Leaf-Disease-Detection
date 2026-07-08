@@ -1,0 +1,110 @@
+{% extends 'detector/base.html' %}
+{% block title %}Prediction History — LeafScan{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-hdr {
+  background:linear-gradient(135deg, var(--g-dark), var(--g-mid));
+  color:#fff; padding:3rem 1.5rem;
+}
+.page-hdr h1 { font-family:'Playfair Display',serif; font-size:2.1rem; }
+.page-hdr p  { color:rgba(255,255,255,.62); margin-top:.4rem; }
+
+.hist-section { padding:3rem 1.5rem; }
+
+.hist-table {
+  width:100%; border-collapse:collapse;
+  background:#fff; border-radius:var(--r); overflow:hidden; box-shadow:var(--sh-sm);
+}
+.hist-table thead tr { background:var(--g-dark); color:#fff; }
+.hist-table th {
+  padding:.9rem 1.1rem; text-align:left;
+  font-size:.76rem; font-weight:700; text-transform:uppercase; letter-spacing:.7px;
+}
+.hist-table td {
+  padding:.85rem 1.1rem; border-bottom:1px solid #f0f0f0;
+  font-size:.86rem; vertical-align:middle;
+}
+.hist-table tr:last-child td { border-bottom:none; }
+.hist-table tr:hover td { background:var(--g-pale); }
+
+.thumb { width:52px; height:52px; object-fit:cover; border-radius:8px; border:2px solid var(--g-light); }
+
+.conf-pill {
+  font-family:'DM Mono',monospace; font-size:.78rem;
+  background:var(--cream); padding:.24rem .55rem;
+  border-radius:6px; font-weight:500; color:var(--g-dark);
+}
+
+.empty {
+  text-align:center; padding:5rem 2rem; color:var(--muted);
+}
+.empty i { font-size:3rem; color:var(--g-light); margin-bottom:1rem; display:block; }
+.empty h3 { font-family:'Playfair Display',serif; color:var(--g-dark); margin-bottom:.5rem; }
+
+@media(max-width:700px){ .hide-sm{ display:none; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hdr">
+  <div class="container">
+    <h1><i class="fas fa-history" style="margin-right:.5rem;"></i>Prediction History</h1>
+    <p>All previously analysed leaf images and their detection results</p>
+  </div>
+</div>
+
+<section class="hist-section">
+  <div class="container">
+    {% if predictions %}
+    <table class="hist-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Plant</th>
+          <th>Disease / Condition</th>
+          <th>Status</th>
+          <th class="hide-sm">Confidence</th>
+          <th class="hide-sm">Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pred in predictions %}
+        <tr>
+          <td><img src="{{ pred.image.url }}" alt="{{ pred.plant_name }}" class="thumb" /></td>
+          <td><strong>{{ pred.plant_name }}</strong></td>
+          <td>{{ pred.disease_name }}</td>
+          <td>
+            {% if pred.is_healthy %}
+              <span class="badge b-healthy"><i class="fas fa-check-circle"></i> Healthy</span>
+            {% else %}
+              <span class="badge b-diseased"><i class="fas fa-virus"></i> Diseased</span>
+            {% endif %}
+          </td>
+          <td class="hide-sm"><span class="conf-pill">{{ pred.confidence|floatformat:1 }}%</span></td>
+          <td class="hide-sm" style="color:var(--muted);font-size:.8rem;">{{ pred.created_at|date:"M d, Y" }}</td>
+          <td>
+            <a href="{% url 'prediction_detail' pred.pk %}" class="btn btn-outline"
+               style="padding:.32rem .75rem;font-size:.78rem;">
+              <i class="fas fa-eye"></i> View
+            </a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% else %}
+    <div class="empty">
+      <i class="fas fa-leaf"></i>
+      <h3>No predictions yet</h3>
+      <p>Upload a leaf image on the home page to get started.</p>
+      <a href="{% url 'index' %}" class="btn btn-primary" style="margin-top:1.5rem;">
+        <i class="fas fa-camera"></i> Scan a Leaf
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
